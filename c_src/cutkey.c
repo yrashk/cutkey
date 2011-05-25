@@ -178,7 +178,8 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
 			       ERL_DRV_BUF2BINARY, (ErlDrvTermData) e, esize,
 			       ERL_DRV_BUF2BINARY, (ErlDrvTermData) n, nsize,
 			       ERL_DRV_BUF2BINARY, (ErlDrvTermData) d, dsize,
-			       ERL_DRV_TUPLE, 3,
+			       ERL_DRV_NIL,
+			       ERL_DRV_LIST, 4,
 			       ERL_DRV_TUPLE, 3};
       driver_output_term(dd->erl_port, spec, sizeof(spec) / sizeof(spec[0]));
       driver_free(e);
