@@ -175,9 +175,9 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
       dsize = BN_bn2mpi(rsa->d, d);
       ErlDrvTermData spec[] = {ERL_DRV_PORT, dd->term_port,
 			       ERL_DRV_UINT, job->ref,
-			       ERL_DRV_BUF2BINARY, e, esize,
-			       ERL_DRV_BUF2BINARY, n, nsize,
-			       ERL_DRV_BUF2BINARY, d, dsize,
+			       ERL_DRV_BUF2BINARY, (ErlDrvTermData) e, esize,
+			       ERL_DRV_BUF2BINARY, (ErlDrvTermData) n, nsize,
+			       ERL_DRV_BUF2BINARY, (ErlDrvTermData) d, dsize,
 			       ERL_DRV_TUPLE, 3,
 			       ERL_DRV_TUPLE, 3};
       driver_output_term(dd->erl_port, spec, sizeof(spec) / sizeof(spec[0]));
