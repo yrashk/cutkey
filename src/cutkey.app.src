@@ -5,5 +5,5 @@
   {registered, []},
   {applications, [kernel, stdlib]},
   {mod, { cutkey_app, []}},
-  {env, []}
+  {env, [{max_jobs, 4}]}
  ]}.
