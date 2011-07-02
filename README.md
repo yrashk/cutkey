@@ -1,7 +1,8 @@
 #cutkey
 
-cutkey is an Erlang interface to OpenSSL's key generation routines. cutkey is at
-an early stage of development and currently only generates RSA keys.
+cutkey is an Erlang app for generating RSA keys. It does so by calling the
+OpenSSL key generation routines via a port driver. It may produce DSA keys as
+well at some point.
 
 Example usage:
 

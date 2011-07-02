@@ -1,6 +1,6 @@
 {application, cutkey,
  [
-  {description, ""},
+  {description, "An Erlang app for generating RSA keys"},
   {vsn, "0.1"},
   {registered, []},
   {applications, [kernel, stdlib]},
