@@ -25,6 +25,11 @@
 #include <openssl/bn.h>
 #include <openssl/rsa.h>
 
+#if ERL_DRV_EXTENDED_MAJOR_VERSION < 2
+#define ErlDrvSizeT int
+#define ErlDrvSSizeT int
+#endif
+
 #define CUTKEY_CMD_RSA     1
 
 #define CUTKEY_ERR_CMD     0
@@ -47,13 +52,13 @@ typedef struct _ck_job_t {
 /* Driver Callbacks */
 static ErlDrvData start(ErlDrvPort port, char* cmd);
 static void stop(ErlDrvData handle);
-static int call(ErlDrvData drv_data,
-		unsigned int command,
-		char *buf,
-		int len,
-		char **rbuf,
-		int rlen,
-		unsigned int *flags);
+static ErlDrvSSizeT call(ErlDrvData drv_data,
+			 unsigned int command,
+			 char *buf,
+			 ErlDrvSizeT len,
+			 char **rbuf,
+			 ErlDrvSizeT rlen,
+			 unsigned int *flags);
 static void ready_async(ErlDrvData drv_data, ErlDrvThreadData data);
 static void do_rsa_job(void* data);
 
@@ -76,7 +81,7 @@ static ErlDrvEntry cutkey_driver_entry = {
     NULL,                             /* event */
     ERL_DRV_EXTENDED_MARKER,          /* ERL_DRV_EXTENDED_MARKER */
     ERL_DRV_EXTENDED_MAJOR_VERSION,   /* ERL_DRV_EXTENDED_MAJOR_VERSION */
-    ERL_DRV_EXTENDED_MAJOR_VERSION,   /* ERL_DRV_EXTENDED_MINOR_VERSION */
+    ERL_DRV_EXTENDED_MINOR_VERSION,   /* ERL_DRV_EXTENDED_MINOR_VERSION */
     ERL_DRV_FLAG_USE_PORT_LOCKING     /* ERL_DRV_FLAGs */
 };
 
@@ -96,8 +101,9 @@ static void stop(ErlDrvData edd) {
   driver_free(dd);
 }
 
-static int call(ErlDrvData edd, unsigned int cmd, char *buf, int len,
-		char **rbuf, int rlen, unsigned int *flags) {
+static ErlDrvSSizeT call(ErlDrvData edd, unsigned int cmd, char *buf,
+			 ErlDrvSizeT len, char **rbuf, ErlDrvSizeT rlen,
+			 unsigned int *flags) {
   ck_drv_t* dd = (ck_drv_t*) edd;
   int version, out_len, index, rindex, errno;
   ei_term tuple, ref, bits, e;
