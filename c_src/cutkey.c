@@ -173,24 +173,50 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
       int esize = BN_bn2mpi(rsa->e, NULL);
       int nsize = BN_bn2mpi(rsa->n, NULL);
       int dsize = BN_bn2mpi(rsa->d, NULL);
+      int psize = BN_bn2mpi(rsa->p, NULL);
+      int qsize = BN_bn2mpi(rsa->q, NULL);
+      int dmp1size = BN_bn2mpi(rsa->dmp1, NULL);
+      int dmq1size = BN_bn2mpi(rsa->dmq1, NULL);
+      int iqmpsize = BN_bn2mpi(rsa->iqmp, NULL);
       unsigned char *e = driver_alloc(esize);
       unsigned char *n = driver_alloc(nsize);
       unsigned char *d = driver_alloc(dsize);
+      unsigned char *p = driver_alloc(psize);
+      unsigned char *q = driver_alloc(qsize);
+      unsigned char *dmp1 = driver_alloc(dmp1size);
+      unsigned char *dmq1 = driver_alloc(dmq1size);
+      unsigned char *iqmp = driver_alloc(iqmpsize);
       esize = BN_bn2mpi(rsa->e, e);
       nsize = BN_bn2mpi(rsa->n, n);
       dsize = BN_bn2mpi(rsa->d, d);
-      ErlDrvTermData spec[] = {ERL_DRV_PORT, dd->term_port,
-			       ERL_DRV_UINT, job->ref,
-			       ERL_DRV_BUF2BINARY, (ErlDrvTermData) e, esize,
-			       ERL_DRV_BUF2BINARY, (ErlDrvTermData) n, nsize,
-			       ERL_DRV_BUF2BINARY, (ErlDrvTermData) d, dsize,
-			       ERL_DRV_NIL,
-			       ERL_DRV_LIST, 4,
-			       ERL_DRV_TUPLE, 3};
+      psize = BN_bn2mpi(rsa->p, p);
+      qsize = BN_bn2mpi(rsa->q, q);
+      dmp1size = BN_bn2mpi(rsa->dmp1, dmp1);
+      dmq1size = BN_bn2mpi(rsa->dmq1, dmq1);
+      iqmpsize = BN_bn2mpi(rsa->iqmp, iqmp);
+      ErlDrvTermData spec[] =
+	{ERL_DRV_PORT, dd->term_port,
+	 ERL_DRV_UINT, job->ref,
+	 ERL_DRV_BUF2BINARY, (ErlDrvTermData) e, esize,
+	 ERL_DRV_BUF2BINARY, (ErlDrvTermData) n, nsize,
+	 ERL_DRV_BUF2BINARY, (ErlDrvTermData) d, dsize,
+	 ERL_DRV_BUF2BINARY, (ErlDrvTermData) p, psize,
+	 ERL_DRV_BUF2BINARY, (ErlDrvTermData) q, qsize,
+	 ERL_DRV_BUF2BINARY, (ErlDrvTermData) dmp1, dmp1size,
+	 ERL_DRV_BUF2BINARY, (ErlDrvTermData) dmq1, dmq1size,
+	 ERL_DRV_BUF2BINARY, (ErlDrvTermData) iqmp, iqmpsize,
+	 ERL_DRV_NIL,
+	 ERL_DRV_LIST, 9,
+	 ERL_DRV_TUPLE, 3};
       driver_output_term(dd->erl_port, spec, sizeof(spec) / sizeof(spec[0]));
       driver_free(e);
       driver_free(n);
       driver_free(d);
+      driver_free(p);
+      driver_free(q);
+      driver_free(dmp1);
+      driver_free(dmq1);
+      driver_free(iqmp);
       RSA_free(job->rsa);
       driver_free(async_data);
     } else {
