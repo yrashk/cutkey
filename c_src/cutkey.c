@@ -39,6 +39,17 @@
   driver_output_term(Port, Result, ResultN)
 #endif
 
+#if __clang__ && __APPLE__
+#define CUTKEY_SILENCE_DEPRECATED_ON_OSX_START            \
+  _Pragma("clang diagnostic push");                         \
+  _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"");
+#define CUTKEY_SILENCE_DEPRECATED_ON_OSX_END  \
+  _Pragma("clang diagnostic pop");
+#else
+#define CUTKEY_SILENCE_DEPRECATED_ON_OSX_START
+#define CUTKEY_SILENCE_DEPRECATED_ON_OSX_END
+#endif
+
 #define CUTKEY_CMD_RSA     1
 
 #define CUTKEY_ERR_CMD     0
@@ -179,6 +190,7 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
   if (job->cmd == CUTKEY_CMD_RSA) {
     if (job->rsa != NULL) {
       RSA* rsa = job->rsa;
+      CUTKEY_SILENCE_DEPRECATED_ON_OSX_START
       int esize = BN_bn2mpi(rsa->e, NULL);
       int nsize = BN_bn2mpi(rsa->n, NULL);
       int dsize = BN_bn2mpi(rsa->d, NULL);
@@ -187,6 +199,7 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
       int dmp1size = BN_bn2mpi(rsa->dmp1, NULL);
       int dmq1size = BN_bn2mpi(rsa->dmq1, NULL);
       int iqmpsize = BN_bn2mpi(rsa->iqmp, NULL);
+      CUTKEY_SILENCE_DEPRECATED_ON_OSX_END
       unsigned char *e = driver_alloc(esize);
       unsigned char *n = driver_alloc(nsize);
       unsigned char *d = driver_alloc(dsize);
@@ -195,6 +208,7 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
       unsigned char *dmp1 = driver_alloc(dmp1size);
       unsigned char *dmq1 = driver_alloc(dmq1size);
       unsigned char *iqmp = driver_alloc(iqmpsize);
+      CUTKEY_SILENCE_DEPRECATED_ON_OSX_START
       esize = BN_bn2mpi(rsa->e, e);
       nsize = BN_bn2mpi(rsa->n, n);
       dsize = BN_bn2mpi(rsa->d, d);
@@ -203,6 +217,7 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
       dmp1size = BN_bn2mpi(rsa->dmp1, dmp1);
       dmq1size = BN_bn2mpi(rsa->dmq1, dmq1);
       iqmpsize = BN_bn2mpi(rsa->iqmp, iqmp);
+      CUTKEY_SILENCE_DEPRECATED_ON_OSX_END
       ErlDrvTermData spec[] =
 	{ERL_DRV_PORT, dd->term_port,
 	 ERL_DRV_UINT, job->ref,
@@ -226,7 +241,9 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
       driver_free(dmp1);
       driver_free(dmq1);
       driver_free(iqmp);
+      CUTKEY_SILENCE_DEPRECATED_ON_OSX_START
       RSA_free(job->rsa);
+      CUTKEY_SILENCE_DEPRECATED_ON_OSX_END
       driver_free(async_data);
     } else {
       ErlDrvTermData spec[] = {ERL_DRV_PORT, dd->term_port,
@@ -241,5 +258,7 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
 
 static void do_rsa_job(void* data) {
   ck_job_t* job = (ck_job_t*) data;
+  CUTKEY_SILENCE_DEPRECATED_ON_OSX_START
   job->rsa = RSA_generate_key(job->num, job->e, NULL, NULL);
+  CUTKEY_SILENCE_DEPRECATED_ON_OSX_END
 }
