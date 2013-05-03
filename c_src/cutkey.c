@@ -30,6 +30,15 @@
 #define ErlDrvSSizeT int
 #endif
 
+#if ERL_DRV_EXTENDED_MAJOR_VERSION > 2 || \
+   (ERL_DRV_EXTENDED_MAJOR_VERSION == 2 && ERL_DRV_EXTENDED_MINOR_VERSION >= 1)
+#define CUTKEY_DRV_OUTPUT_TERM(Port, Result, ResultN) \
+  erl_drv_output_term(driver_mk_port(Port), Result, ResultN)
+#else
+#define CUTKEY_DRV_OUTPUT_TERM(Port, Result, ResultN) \
+  driver_output_term(Port, Result, ResultN)
+#endif
+
 #define CUTKEY_CMD_RSA     1
 
 #define CUTKEY_ERR_CMD     0
@@ -208,7 +217,7 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
 	 ERL_DRV_NIL,
 	 ERL_DRV_LIST, 9,
 	 ERL_DRV_TUPLE, 3};
-      driver_output_term(dd->erl_port, spec, sizeof(spec) / sizeof(spec[0]));
+      CUTKEY_DRV_OUTPUT_TERM(dd->erl_port, spec, sizeof(spec)/sizeof(spec[0]));
       driver_free(e);
       driver_free(n);
       driver_free(d);
@@ -224,7 +233,7 @@ static void ready_async(ErlDrvData edd, ErlDrvThreadData async_data) {
 			       ERL_DRV_UINT, job->ref,
 			       ERL_DRV_ATOM, driver_mk_atom("error"),
 			       ERL_DRV_TUPLE, 3};
-      driver_output_term(dd->erl_port, spec, sizeof(spec) / sizeof(spec[0]));
+      CUTKEY_DRV_OUTPUT_TERM(dd->erl_port, spec, sizeof(spec)/sizeof(spec[0]));
       driver_free(async_data);
     }
   }
